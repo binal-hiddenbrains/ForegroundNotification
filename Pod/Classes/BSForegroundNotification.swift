@@ -66,8 +66,8 @@ import AVFoundation
     
     //MARK: - Open
     
-    open func presentNotification() {
-        
+    open func presentNotification(userInfo: [AnyHashable: Any]) {
+        self.foregroundNotificationView.userInfo = userInfo
         self.foregroundNotificationView.setupNotification()
 
         BSForegroundNotification.pendingForegroundNotifications.append(self)
