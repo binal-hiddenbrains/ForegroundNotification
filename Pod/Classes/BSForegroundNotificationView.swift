@@ -500,10 +500,6 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
                 
                 BSForegroundNotification.pendingForegroundNotifications.first?.fire()
                 
-                if BSForegroundNotification.pendingForegroundNotifications.isEmpty {
-                    UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
-                }
-                
                 completion?()
         })
         
