@@ -506,6 +506,14 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
                 
                 completion?()
         })
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(150), execute: {
+            if BSForegroundNotification.pendingForegroundNotifications.count < 2 {
+                if let window = UIApplication.shared.keyWindow {
+                    window.windowLevel = UIWindowLevelNormal
+                }
+            }
+        })
     }
     
     //MARK: - Private

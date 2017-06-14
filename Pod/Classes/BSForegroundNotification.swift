@@ -39,25 +39,27 @@ open class BSForegroundNotification {
     
     //MARK: - Initialization
     
-    public init(userInfo: [AnyHashable: Any]) {
-        foregroundNotificationView.userInfo = userInfo
+    public convenience init(userInfo: [AnyHashable: Any]) {
+        self.init(userInfo: userInfo);
+        self.foregroundNotificationView.userInfo = userInfo
     }
     
-    public init(localNotification: UILocalNotification) {
-        foregroundNotificationView.localNotification = localNotification
+    public convenience init(localNotification: UILocalNotification) {
+        self.init(localNotification: localNotification);
+        self.foregroundNotificationView.localNotification = localNotification
     }
     
-    public init(title: String?, subtitle: String?, category: String?, soundName: String?, userInfo: [AnyHashable: Any]?, localNotification: UILocalNotification?) {
+    public convenience init(title: String?, subtitle: String?, category: String?, soundName: String?, userInfo: [AnyHashable: Any]?, localNotification: UILocalNotification?) {
+        self.init(title: title, subtitle: subtitle, category: category, soundName: soundName, userInfo: userInfo, localNotification: localNotification);
+        self.foregroundNotificationView.titleLabel.text = title ?? ""
+        self.foregroundNotificationView.subtitleTextView.text = subtitle ?? ""
+        self.foregroundNotificationView.categoryIdentifier = category
+        self.foregroundNotificationView.soundName = soundName
         
-        foregroundNotificationView.titleLabel.text = title ?? ""
-        foregroundNotificationView.subtitleTextView.text = subtitle ?? ""
-        foregroundNotificationView.categoryIdentifier = category
-        foregroundNotificationView.soundName = soundName
-        
-        foregroundNotificationView.userInfo = userInfo
-        foregroundNotificationView.localNotification = localNotification
+        self.foregroundNotificationView.userInfo = userInfo
+        self.foregroundNotificationView.localNotification = localNotification
     }
-
+    
     //MARK: - Deinitialization
     
     //MARK: - Actions
