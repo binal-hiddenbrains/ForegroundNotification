@@ -15,7 +15,7 @@
 import UIKit
 import AVFoundation
 
-open class BSForegroundNotification {
+@objc public class BSForegroundNotification: NSObject {
     
     private lazy var foregroundNotificationView: BSForegroundNotificationView = {
         return UINib(nibName: "BSForegroundNotificationView", bundle: Bundle(for: BSForegroundNotificationView.classForCoder())).instantiate(withOwner: nil, options: nil).first as! BSForegroundNotificationView
@@ -27,7 +27,7 @@ open class BSForegroundNotification {
     open weak var delegate: BSForegroundNotificationDelegate? {
         
         didSet {
-            foregroundNotificationView.delegate = delegate
+            self.foregroundNotificationView.delegate = delegate
         }
     }
     
@@ -68,7 +68,7 @@ open class BSForegroundNotification {
     
     open func presentNotification() {
         
-        foregroundNotificationView.setupNotification()
+        self.foregroundNotificationView.setupNotification()
 
         BSForegroundNotification.pendingForegroundNotifications.append(self)
         
@@ -78,13 +78,13 @@ open class BSForegroundNotification {
     }
     
     open func dismissView() {
-        foregroundNotificationView.dismissNotification()
+        self.foregroundNotificationView.dismissNotification()
     }
     
     //MARK: - Internal
     
     func fire() {
-        foregroundNotificationView.presentNotification()
+        self.foregroundNotificationView.presentNotification()
     }
 
     //MARK: - Private
