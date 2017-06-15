@@ -141,7 +141,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         
         didSet {
             
-            applicationNameLabel.text = (Bundle.main.infoDictionary?["CFBundleName"] as? String)?.uppercased()
+            applicationNameLabel.text = (Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String)?.uppercased()
             
             if let payload = userInfo?["aps"] as? [AnyHashable: Any] {
                 
