@@ -94,7 +94,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     }
     
     private var maxHeightForNotification: CGFloat {
-
+        
         var height = heightForTitleAndSubtitleAndMargins
         
         if rightUserNotificationAction != nil {
@@ -118,7 +118,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
     }
     
     private var maxHeightForTextContainer: CGFloat {
-
+        
         if UIApplication.shared.keyWindow!.bounds.size.height - currentHeightForKeyboard == maxHeightForNotification {
             
             if heightForTitleAndSubtitleAndMargins <= maxHeightForNotification / 2 {
@@ -216,13 +216,13 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             initialPanLocation = panLocation
             
         case .changed:
-
+            
             topConstraintNotification.constant =  min(-(initialPanLocation.y - panLocation.y), 0)
             
             previousPanStatus = velocity.y >= 0 ? .down : .up
             
             if panLocation.y >= frame.size.height - 20 && !extendingIsFinished {
-
+                
                 previousPanStatus = .pull
                 heightConstraintNotification.constant = max(min(panLocation.y + 17, maxHeightForNotification), initialHeightForNotification)
             }
@@ -236,7 +236,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             }
             
         case .ended, .cancelled, .failed:
-
+            
             if previousPanStatus == .up {
                 
                 dismissNotification()
@@ -455,7 +455,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             self.heightTextContainerLayoutConstraint.constant = 0
             self.topConstraintNotification.constant = 0
             self.superview?.layoutIfNeeded()
-        }) 
+        })
         
         if let soundName = soundName {
             
@@ -489,18 +489,16 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             self.dimmingView.alpha = 0
             self.superview?.layoutIfNeeded()
             
-            }, completion: { finished in
-                
-                self.removeFromSuperview()
-                self.dimmingView.removeFromSuperview()
-                
-                if let _ = BSForegroundNotification.pendingForegroundNotifications.first {
-                    BSForegroundNotification.pendingForegroundNotifications.removeFirst()
-                }
-                
-                BSForegroundNotification.pendingForegroundNotifications.first?.fire()
-                
-                completion?()
+        }, completion: { finished in
+            
+            self.removeFromSuperview()
+            self.dimmingView.removeFromSuperview()
+            
+            if let _ = BSForegroundNotification.pendingForegroundNotifications.first {
+                BSForegroundNotification.pendingForegroundNotifications.removeFirst()
+            }
+            
+            BSForegroundNotification.pendingForegroundNotifications.first?.fire()
         })
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(150), execute: {
@@ -510,6 +508,8 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
                 }
             }
         })
+        
+        completion?()
     }
     
     //MARK: - Private
@@ -592,13 +592,13 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
             
             self.superview?.layoutIfNeeded()
             
-            }, completion: { _ in
-                
-                self.extendingIsFinished = true
-                
-                if self.shouldShowTextView {
-                    self.textView.becomeFirstResponder()
-                }
+        }, completion: { _ in
+            
+            self.extendingIsFinished = true
+            
+            if self.shouldShowTextView {
+                self.textView.becomeFirstResponder()
+            }
         })
     }
     
@@ -620,7 +620,7 @@ class BSForegroundNotificationView: UIView, UITextViewDelegate {
         }
         
         UIView.animate(withDuration: 0.4, animations: {
-
+            
             self.heightTextContainerLayoutConstraint?.constant = self.maxHeightForTextContainer
             self.heightConstraintNotification.constant = height
             

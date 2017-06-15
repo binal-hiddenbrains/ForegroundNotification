@@ -7,7 +7,7 @@
 //
 
 @objc public protocol BSForegroundNotificationDelegate: class, UIApplicationDelegate {
-
+    
     @objc optional func foregroundRemoteNotificationWasTouched(with userInfo: [AnyHashable: Any])
     @objc optional func foregroundLocalNotificationWasTouched(with localNotification: UILocalNotification)
 }
@@ -15,7 +15,7 @@
 import UIKit
 import AVFoundation
 
-@objc public class BSForegroundNotification: NSObject {
+@objc public class BSForegroundNotification: NSObject, BSForegroundNotificationDelegate {
     
     private lazy var foregroundNotificationView: BSForegroundNotificationView = {
         return UINib(nibName: "BSForegroundNotificationView", bundle: Bundle(for: BSForegroundNotificationView.classForCoder())).instantiate(withOwner: nil, options: nil).first as! BSForegroundNotificationView
@@ -24,41 +24,35 @@ import AVFoundation
     open static var systemSoundID: SystemSoundID = 1001
     open static var timeToDismissNotification = 4
     
-    open weak var delegate: BSForegroundNotificationDelegate? {
-        
-        didSet {
-            self.foregroundNotificationView.delegate = delegate
-        }
-    }
-    
     static var pendingForegroundNotifications = [BSForegroundNotification]()
     
     private var heightConstraintTextView: NSLayoutConstraint?
+    public var tapHandler: ()->Void = {}
     
     //MARK: - Class Methods
     
     //MARK: - Initialization
     
-    public convenience init(userInfo: [AnyHashable: Any]) {
-        self.init(userInfo: userInfo);
-        self.foregroundNotificationView.userInfo = userInfo
-    }
-    
-    public convenience init(localNotification: UILocalNotification) {
-        self.init(localNotification: localNotification);
-        self.foregroundNotificationView.localNotification = localNotification
-    }
-    
-    public convenience init(title: String?, subtitle: String?, category: String?, soundName: String?, userInfo: [AnyHashable: Any]?, localNotification: UILocalNotification?) {
-        self.init(title: title, subtitle: subtitle, category: category, soundName: soundName, userInfo: userInfo, localNotification: localNotification);
-        self.foregroundNotificationView.titleLabel.text = title ?? ""
-        self.foregroundNotificationView.subtitleTextView.text = subtitle ?? ""
-        self.foregroundNotificationView.categoryIdentifier = category
-        self.foregroundNotificationView.soundName = soundName
-        
-        self.foregroundNotificationView.userInfo = userInfo
-        self.foregroundNotificationView.localNotification = localNotification
-    }
+    //    public convenience init(userInfo: [AnyHashable: Any]) {
+    //        self.init(userInfo: userInfo);
+    //        self.foregroundNotificationView.userInfo = userInfo
+    //    }
+    //
+    //    public convenience init(localNotification: UILocalNotification) {
+    //        self.init(localNotification: localNotification);
+    //        self.foregroundNotificationView.localNotification = localNotification
+    //    }
+    //
+    //    public convenience init(title: String?, subtitle: String?, category: String?, soundName: String?, userInfo: [AnyHashable: Any]?, localNotification: UILocalNotification?) {
+    //        self.init(title: title, subtitle: subtitle, category: category, soundName: soundName, userInfo: userInfo, localNotification: localNotification);
+    //        self.foregroundNotificationView.titleLabel.text = title ?? ""
+    //        self.foregroundNotificationView.subtitleTextView.text = subtitle ?? ""
+    //        self.foregroundNotificationView.categoryIdentifier = category
+    //        self.foregroundNotificationView.soundName = soundName
+    //
+    //        self.foregroundNotificationView.userInfo = userInfo
+    //        self.foregroundNotificationView.localNotification = localNotification
+    //    }
     
     //MARK: - Deinitialization
     
@@ -66,10 +60,12 @@ import AVFoundation
     
     //MARK: - Open
     
-    open func presentNotification(userInfo: [AnyHashable: Any]) {
+    open func presentNotification(userInfo: [AnyHashable: Any], completion: @escaping () -> Void) {
+        self.tapHandler = completion
         self.foregroundNotificationView.userInfo = userInfo
+        self.foregroundNotificationView.delegate = self
         self.foregroundNotificationView.setupNotification()
-
+        
         BSForegroundNotification.pendingForegroundNotifications.append(self)
         
         if BSForegroundNotification.pendingForegroundNotifications.count == 1 {
@@ -86,6 +82,10 @@ import AVFoundation
     func fire() {
         self.foregroundNotificationView.presentNotification()
     }
-
-    //MARK: - Private
+    
+    //MARK: - BSForegroundNotificationDelegate
+    
+    public func foregroundRemoteNotificationWasTouched(with userInfo: [AnyHashable: Any]) {
+        self.tapHandler();
+    }
 }
